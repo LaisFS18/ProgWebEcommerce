@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="/register.css">
+
+    <title>Smd Ecommerce</title>
+  </head>
+  <body>
+    <h1 class="titulo">Cadastrar um Novo Cliente</h1>
+
+    <ul>
+      <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
+      <li><%= error.message %></li>
+      <% }) %> <% } %>
+    </ul>
+
+    <form action="/users/register" method="POST" class="formulario">
+      <label class="label-field" for="nome">Nome:</label>
+      <input class="campo" type="text" id="nome" name="nome" placeholder="Nome" required />
+      <br>
+
+      <label class="label-field" for="endereco">Endereço:</label>
+        <input
+        class="campo"
+          type="text"
+          id="endereco"
+          name="endereco"
+          placeholder="Endereço"
+          required
+        />
+      <br>
+
+      <label class="label-field" for="email">Email:</label>
+        <input
+          class="campo"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Email"
+          required
+        />
+      <br>
+
+      <label class="label-field" for="login">Login:</label>
+        <input
+          class="campo"
+          type="text"
+          id="login"
+          name="login"
+          placeholder="Login"
+          required
+        />
+      <br>
+
+      <label class="label-field" for="senha">Senha:</label>
+        <input
+          class="campo"
+          type="password"
+          id="senha"
+          name="senha"
+          placeholder="Senha"
+          required
+        />
+      <br>
+
+      <label class="label-field" for="senha">Confirme sua senha:</label>
+        <input
+          class="campo"
+          type="password"
+          id="senha2"
+          name="senha2"
+          placeholder="Confirme sua senha"
+          required
+        />
+      <br>
+      <input type="submit" value="Cadastrar" class="botao-cadastrar" />
+    </form>
+
+    <a href="/users/login" class="link-voltar">Voltar</a>
+  </body>
+</html>

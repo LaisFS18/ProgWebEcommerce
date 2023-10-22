@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>SMD Ecommerce</title>
+
+    <link rel="stylesheet" href="/login.css">
+  </head>
+  <body>
+    <h1>Identificação do Usuário</h1>
+
+    <ul>
+      <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
+      <li><%= error.message %></li>
+      <% }) %> <% } %>
+    </ul>
+
+    <ul>
+      <% if(messages.success_msg) { %>
+      <li><%= messages.success_msg %></li>
+      <% } %>
+    </ul>
+
+    <ul>
+      <% if (messages.error) { %>
+      <li><%= messages.error %></li>
+      <% } %>
+    </ul>
+
+    <form action="/users/login" method="POST" class="login-form">
+      <label class="label-field" for="login">Login:</label>
+      <input
+        type="text"
+        id="login"
+        name="login"
+        placeholder="Login"
+        required
+        class="input-field"
+      />
+      <br/>
+
+      <label class="label-field" for="senha">Senha:</label>
+        <input
+          type="password"
+          id="senha"
+          name="senha"
+          placeholder="Senha"
+          required
+          class="input-field"
+        />
+        <br/>
+
+      <input class="submit-button" type="submit" value="Entrar" />
+
+      <h2>Ainda não possui um cadastro?</h2>
+      <a class="register-btn" href="/users/register">Registre-se</a>
+    </form>
+  </body>
+</html>

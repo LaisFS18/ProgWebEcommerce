@@ -1,0 +1,77 @@
+
+
+:root {
+    --primary-1: #ACC1E8;
+    --primary-2: #6983EA;
+    --primary-3: #224AE6;
+    --primary-4: #212D5F;
+
+    --white: #FDFBFE;
+    --black: #000000;
+    --gray: #868E96;
+    --red: #C72A2A;
+}
+
+
+.login-form {
+    width: 300px;
+    height: 350px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    background-color: var(--primary-1);
+    text-align: center;
+}
+
+.label-field{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: large;
+    display: flex;
+}
+
+
+.input-field {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+}
+
+
+.submit-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+
+h1 {
+    text-align: center;
+    color: var(--primary-3);
+}
+
+h2{
+    margin-top: 20%;
+    font-size: larger;
+    margin-bottom: 25px;
+}
+
+.register-btn{
+    text-decoration: none;
+    background-color: var(--primary-3);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
