@@ -2,16 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"
-    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Home</title>
   </head>
   <body>
     <h1>Home</h1>
+    <ul>
+      <% products.forEach(product => { %>
+        <li><%= product.categoria_nome %></li>
+        <li><%= product.nome %></li>
+        <li><%= product.preco %></li>
+        <li><%= product.descricao %></li>
+        <li><%= product.foto %></li>
+        <li><%= product.quantidade %></li>
+
+      <% }) %>
+    </ul>
+    
 
     <a href="/users/login">Login</a>
   </body>

@@ -1,10 +1,6 @@
 const pool = require("../db");
 const bcrypt = require("bcrypt");
 
-const getHome =  (req, res) => {
-    res.render("index.ejs");
-};
-
 const getLogin = (req, res) => {
     res.render("login.ejs");
 };
@@ -95,12 +91,27 @@ const register = async (req, res) => {
     }
 };
 
+const getProducts = (req, res, next) => {
+  pool.query(
+    'SELECT produtos.*, categorias.nome as categoria_nome FROM produtos JOIN categorias ON produtos.categoria_id = categorias.id',
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+
+      const products = results.rows;
+
+      res.render("index", { products });
+    }
+  );
+};
+
 
 module.exports = {
-    getHome,
-    getLogin,
-    getRegister,
-    getDashboard,
-    logout,
-    register,
+  getLogin,
+  getRegister,
+  getDashboard,
+  logout,
+  register,
+  getProducts,
 };

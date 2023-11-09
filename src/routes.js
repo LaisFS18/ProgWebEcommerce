@@ -3,7 +3,7 @@ const controller = require("./controller");
 
 const router = Router();
 
-router.get("/", controller.getHome);
+router.get("/", controller.getProducts);
 router.get("/users/login", controller.getLogin);
 router.get("/users/register", controller.getRegister);
 router.get("/users/dashboard", controller.getDashboard);
