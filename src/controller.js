@@ -10,8 +10,17 @@ const getRegister = (req, res) => {
 };
 
 const getDashboard = (req, res) => {
-    console.log(req.isAuthenticated());
-    res.render("dashboard", { user: req.user });
+  if (req.isAuthenticated()) {
+    const isAdmin = req.user.adm;
+
+    if (isAdmin) {
+      res.render('adminDashboard', { user: req.user });
+    } else {
+      res.render('dashboard', { user: req.user });
+    }
+  } else {
+    res.redirect('/users/login');
+  }
 };
 
 const logout = (req, res) => {
