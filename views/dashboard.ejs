@@ -16,7 +16,36 @@
     <a href="/users/logout">Logout</a>
 
     <h4>Olá <%= user.nome %></h4>
-    <h4><%= user.adm ? "você é Administrador" : "usuário comum" %></h4>
+
+    <h1>Editar Informações</h1>
+    <form action="/users/editProfile" method="POST">
+
+      <label for="Nome">Nome:</label>
+      <input
+        type="text"
+        id="newName"
+        name="newName"
+        placeholder="Novo nome"
+        required
+      />
+      <br/>
+
+      <label for="email">Email:</label>
+        <input
+          type="email"
+          id="newEmail"
+          name="newEmail"
+          placeholder="Novo email"
+          required
+        />
+        <br/>
+
+        <input type="submit" value="Alterar" />
+    </form>
+
+    <form action="/users/deleteAccount" method="POST">
+      <input type="submit" value="Deletar conta" />
+    </form>
 
   </body>
 </html>

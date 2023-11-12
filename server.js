@@ -45,6 +45,8 @@ app.use("/users/dashboard", routes, checkNotAuthenticated);
 app.use("/users/logout", routes);
 
 app.use("/users/register", routes);
+app.use("/users/editProfile", checkAuthenticated, routes);
+app.use("/users/deleteAccount", checkAuthenticated, routes);
 
 
 

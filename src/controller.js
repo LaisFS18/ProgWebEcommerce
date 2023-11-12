@@ -115,6 +115,60 @@ const getProducts = (req, res, next) => {
   );
 };
 
+const postEditProfile = (req, res) => {
+  const { newName, newEmail } = req.body;
+
+  if (!newName || !newEmail) {
+    req.flash("error_msg", "Por favor, preencha todos os campos.");
+    return res.redirect("/users/dashboard");
+  }
+
+  const userId = req.user.id; 
+
+  pool.query(
+    `UPDATE usuarios
+     SET nome = $1, email = $2
+     WHERE id = $3`,
+    [newName, newEmail, userId],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        req.flash("error_msg", "Erro ao atualizar o perfil.");
+        return res.redirect("/users/dashboard");
+      }
+
+      req.flash("success_msg", "Perfil atualizado com sucesso.");
+      res.redirect("/users/dashboard");
+    }
+  );
+};
+
+const postDeleteAccount = (req, res) => {
+  const userId = req.user.id;
+
+  pool.query(
+    `DELETE FROM usuarios
+     WHERE id = $1`,
+    [userId],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        req.flash("error_msg", "Erro ao excluir a conta.");
+        return res.redirect("/users/dashboard");
+      }
+
+      req.session.destroy((err) => {
+        if (err) {
+          console.error(err);
+          req.flash("error_msg", "Erro ao encerrar a sessão.");
+          return res.redirect("/users/dashboard");
+        }
+        res.redirect("/");
+      });
+    }
+  );
+};
+
 
 module.exports = {
   getLogin,
@@ -122,5 +176,7 @@ module.exports = {
   getDashboard,
   logout,
   register,
+  postDeleteAccount,
+  postEditProfile,
   getProducts,
 };
