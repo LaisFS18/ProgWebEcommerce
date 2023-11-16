@@ -1,0 +1,108 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class ConexaoSQL {
+
+    private static Connection conexao;
+
+    public static Connection conectar() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conexao = DriverManager.getConnection("jdbc:sqlite:produtos.db");
+            return conexao;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void desconectar() {
+        try {
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class CadProdutos {
+
+    public static boolean produtoJaCadastrado(String nome) {
+        String sql = "SELECT COUNT(*) FROM produtos WHERE nome = ?";
+
+        try (Connection conexao = ConexaoSQL.conectar();
+             PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nome);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static void cadastrarProduto(String nome, double preco, int quantidade, String descricao, String imagem) {
+        if (produtoJaCadastrado(nome)) {
+            System.out.println("Produto já cadastrado.");
+            return;
+        }
+        
+        String sql = "INSERT INTO produtos (nome, preco, quantidade, descricao, imagem) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conexao = ConexaoSQL.conectar();
+             PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nome);
+            preparedStatement.setDouble(2, preco);
+            preparedStatement.setInt(3, quantidade);
+            preparedStatement.setString(4, descricao);
+            preparedStatement.setString(5, imagem);
+            
+            preparedStatement.executeUpdate();
+
+            System.out.println("Produto cadastrado com sucesso.");
+
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void atualizarProduto(String nvNome, double nvPreco, int nvQuantidade, String nvDescricao, String nvImagem) {
+        String sql = "UPDATE produtos SET preco = ?, quantidade = ?, descricao = ?, imagem = ?, WHERE nome = ?";
+
+        try (Connection conexao = ConexaoSQL.conectar();
+             PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nvNome);
+            preparedStatement.setDouble(2, nvPreco);
+            preparedStatement.setInt(3, nvQuantidade);
+            preparedStatement.setString(4, nvDescricao);
+            preparedStatement.setString(5, nvImagem);
+
+            int linhasAfetadas = preparedStatement.executeUpdate();
+
+            if (linhasAfetadas > 0) {
+                System.out.println("Produto atualizado com sucesso.");
+            } else {
+                System.out.println("Produto não encontrado.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
