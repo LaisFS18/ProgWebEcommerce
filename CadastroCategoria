@@ -1,0 +1,100 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class ConexaoSQL {
+
+    private static Connection conexao;
+
+    public static Connection conectar() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conexao = DriverManager.getConnection("jdbc:sqlite:produtos.db");
+            return conexao;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void desconectar() {
+        try {
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class CadCategoria {
+
+    public static boolean categoriaJaCadastrado(String nome) {
+        String sql = "SELECT COUNT(*) FROM categorias WHERE nome = ?";
+
+        try (Connection conexao = ConexaoSQL.conectar();
+             PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nome);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static void cadastrarCategoria(String nome) {
+        if (produtoJaCadastrado(nome)) {
+            System.out.println("Categoria já cadastrada.");
+            return;
+        }
+        
+        String sql = "INSERT INTO produtos (nome) VALUES (?)";
+
+        try (Connection conexao = ConexaoSQL.conectar();
+             PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nome);
+            
+            preparedStatement.executeUpdate();
+
+            System.out.println("Categoria cadastrada com sucesso.");
+
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void atualizarClasse(String nvNome) {
+        String sql = "UPDATE categorias WHERE nome = ?";
+
+        try (Connection conexao = ConexaoSQL.conectar();
+             PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nvNome);
+            
+            int linhasAfetadas = preparedStatement.executeUpdate();
+
+            if (linhasAfetadas > 0) {
+                System.out.println("Categoria atualizada com sucesso.");
+            } else {
+                System.out.println("Categoria não encontrada.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
