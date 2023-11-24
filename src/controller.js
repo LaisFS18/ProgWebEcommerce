@@ -9,18 +9,52 @@ const getRegister = (req, res) => {
     res.render("register.ejs");
 };
 
-const getDashboard = (req, res) => {
-  if (req.isAuthenticated()) {
-    const isAdmin = req.user.adm;
+const getUpdateUser = (req, res) => {
+  res.render("updateUser.ejs");
+};
 
-    if (isAdmin) {
-      res.render('adminDashboard', { user: req.user });
-    } else {
-      res.render('dashboard', { user: req.user });
+const getUpdateProduct = (req, res) => {
+  const productId = req.params.id; 
+
+  pool.query(
+    'SELECT * FROM produtos WHERE id = $1',
+    [productId],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Erro ao buscar detalhes do produto');
+      }
+      
+      const product = results.rows[0]; 
+
+      res.render("updateProduct.ejs", { product }); 
     }
-  } else {
-    res.redirect('/users/login');
-  }
+  );
+};
+
+
+const getDashboard = (req, res) => {
+  pool.query(
+    'SELECT produtos.*, categorias.nome as categoria_nome FROM produtos JOIN categorias ON produtos.categoria_id = categorias.id',
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      const products = results.rows;
+
+      if (req.isAuthenticated()) {
+        const isAdmin = req.user.adm;
+    
+        if (isAdmin) {
+          res.render('adminDashboard', { user: req.user, products });
+        } else {
+          res.render('dashboard', { user: req.user });
+        }
+      } else {
+        res.redirect('/users/login');
+      }
+    }
+  );
 };
 
 const logout = (req, res) => {
@@ -110,7 +144,7 @@ const getProducts = (req, res, next) => {
 
       const products = results.rows;
 
-      res.render("index", { products });
+      res.render("index", { products, user: req.user });
     }
   );
 };
@@ -169,14 +203,59 @@ const postDeleteAccount = (req, res) => {
   );
 };
 
+const updateProduct = (req, res) => {
+  const productId = req.params.id;
+  const { nome, preco, descricao, foto, quantidade } = req.body;
+
+  pool.query(
+      `UPDATE produtos
+       SET nome = $1, preco = $2, descricao = $3, foto = $4, quantidade = $5
+       WHERE id = $6`,
+      [nome, preco, descricao, foto, quantidade, productId],
+      (error, results) => {
+          if (error) {
+              console.error(error);
+              req.flash("error_msg", "Erro ao atualizar o produto.");
+              return res.redirect("product/update/" + productId);
+          }
+
+          req.flash("success_msg", "Produto atualizado com sucesso.");
+          res.redirect("/");
+      }
+  );
+};
+
+const deleteProduct = (req, res) => {
+  const productId = req.params.id;
+
+  pool.query(
+    `DELETE FROM produtos WHERE id = $1`,
+    [productId],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        req.flash("error_msg", "Erro ao excluir o produto.");
+        return res.redirect("/"); 
+      }
+
+      req.flash("success_msg", "Produto excluído com sucesso.");
+      res.redirect("/"); 
+    }
+  );
+};
+
 
 module.exports = {
   getLogin,
   getRegister,
   getDashboard,
+  getUpdateUser,
+  getUpdateProduct,
   logout,
   register,
   postDeleteAccount,
   postEditProfile,
   getProducts,
+  updateProduct,
+  deleteProduct,
 };

@@ -21,6 +21,10 @@
     </ul>
     
 
-    <a href="/users/login">Login</a>
+    <% if (user) { %>
+      <a href="/users/logout">Logout</a>
+    <% } else { %>
+      <a href="/users/login">Login</a>
+    <% } %>
   </body>
 </html>

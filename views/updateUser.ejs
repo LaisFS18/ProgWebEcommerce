@@ -24,25 +24,32 @@
       <li><%= messages.success_msg %></li>
       <% } %>
     </ul>
+    
+    <h1>Editar Informações</h1>
+    <form action="/users/editProfile" method="POST">
 
-    <a href="/users/logout">Logout</a>
+    <label for="Nome">Nome:</label>
+    <input
+        type="text"
+        id="newName"
+        name="newName"
+        placeholder="Novo nome"
+        required
+    />
+    <br/>
 
-    <h4>Olá <%= user.nome %></h4>
+    <label for="email">Email:</label>
+        <input
+        type="email"
+        id="newEmail"
+        name="newEmail"
+        placeholder="Novo email"
+        required
+        />
+        <br/>
 
-    <h4>Produtos</h4>
-
-    <ul>
-      <% products.forEach(product => { %>
-        <a href="/product/update/<%= product.id %>"><%= product.nome %></a>
-      <% }) %>
-    </ul>
-
-    <a href="/">Home</a>
-    <a href="/users/update-profile">Editar perfil</a>
-
-    <form action="/users/deleteAccount" method="POST">
-      <input type="submit" value="Deletar conta" />
+        <input type="submit" value="Alterar" />
     </form>
-    <h1>test</h1>
-  </body>
+
+</body>
 </html>
