@@ -9,8 +9,10 @@ router.get("/users/register", controller.getRegister);
 router.get("/users/dashboard", controller.getDashboard);
 router.get("/users/update-profile", controller.getUpdateUser);
 router.get("/product/update/:id", controller.getUpdateProduct);
+router.get("/product/create", controller.getCreateProduct);
 router.get("/users/logout", controller.logout);
 
+router.post("/create-product", controller.createProduct);
 router.post("/update-product/:id", controller.updateProduct);
 router.post("/delete-product/:id", controller.deleteProduct);
 router.post("/users/deleteAccount", controller.postDeleteAccount);

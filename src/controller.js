@@ -32,6 +32,18 @@ const getUpdateProduct = (req, res) => {
   );
 };
 
+const getCreateProduct = (req, res) => {
+  pool.query('SELECT * FROM categorias', (error, results) => {
+    if (error) {
+      console.error(error);
+    }
+
+    const categories = results.rows;
+    res.render("createProduct.ejs", { categories });
+  });
+};
+
+
 
 const getDashboard = (req, res) => {
   pool.query(
@@ -244,6 +256,27 @@ const deleteProduct = (req, res) => {
   );
 };
 
+const createProduct = (req, res) => {
+  const { nome, preco, descricao, foto, quantidade, categoria } = req.body;
+
+  pool.query(
+    `INSERT INTO produtos (nome, preco, descricao, foto, quantidade, categoria_id)
+     VALUES ($1, $2, $3, $4, $5, $6)`,
+    [nome, preco, descricao, foto, quantidade, categoria],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        req.flash("error_msg", "Erro ao criar o produto.");
+        return res.redirect("/create-product");
+      }
+
+      req.flash("success_msg", "Produto criado com sucesso.");
+      res.redirect("/");
+    }
+  );
+};
+
+
 
 module.exports = {
   getLogin,
@@ -251,6 +284,7 @@ module.exports = {
   getDashboard,
   getUpdateUser,
   getUpdateProduct,
+  getCreateProduct,
   logout,
   register,
   postDeleteAccount,
@@ -258,4 +292,5 @@ module.exports = {
   getProducts,
   updateProduct,
   deleteProduct,
+  createProduct,
 };

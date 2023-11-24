@@ -44,7 +44,9 @@ app.use("/users/register", routes, checkAuthenticated);
 app.use("/users/dashboard", routes, checkNotAuthenticated); 
 app.use("/users/update-profile", routes, checkAuthenticated);
 app.use("/product/update/:id", routes, checkAuthenticated);
-app.use("/update-product/:id", routes, checkAuthenticated); 
+app.use("/update-product/:id", routes, checkAuthenticated);
+app.use("/product/create", routes, checkAuthenticated);
+app.use("/create-product", routes, checkAuthenticated); 
 app.use("/delete-product/:id", routes, checkAuthenticated);
 app.use("/users/logout", routes);
 
