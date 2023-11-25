@@ -43,9 +43,24 @@ const getCreateProduct = (req, res) => {
   });
 };
 
+const getCreateCategory = (req, res) => {
+  res.render("createCategory.ejs");
+};
 
+const getCategoryToUpdate = (req, res, next) => {
+  const categoryId = req.params.id;
 
-const getDashboard = (req, res) => {
+  pool.query('SELECT * FROM categorias WHERE id = $1', [categoryId], (err, result) => {
+    if (err) {
+      return next(err);
+    }
+
+    const category = result.rows[0];
+    res.render('categoryUpdate', { category });
+  });
+};
+
+const getDashboard = (req, res, next) => {
   pool.query(
     'SELECT produtos.*, categorias.nome as categoria_nome FROM produtos JOIN categorias ON produtos.categoria_id = categorias.id',
     (err, results) => {
@@ -56,9 +71,16 @@ const getDashboard = (req, res) => {
 
       if (req.isAuthenticated()) {
         const isAdmin = req.user.adm;
-    
+
         if (isAdmin) {
-          res.render('adminDashboard', { user: req.user, products });
+          // Obtém também as categorias para o admin
+          pool.query('SELECT * FROM categorias', (error, categoryResults) => {
+            if (error) {
+              return next(error);
+            }
+            const categories = categoryResults.rows;
+            res.render('adminDashboard', { user: req.user, products, categories });
+          });
         } else {
           res.render('dashboard', { user: req.user });
         }
@@ -161,32 +183,53 @@ const getProducts = (req, res, next) => {
   );
 };
 
-const postEditProfile = (req, res) => {
-  const { newName, newEmail } = req.body;
-
-  if (!newName || !newEmail) {
-    req.flash("error_msg", "Por favor, preencha todos os campos.");
-    return res.redirect("/users/dashboard");
+const postEditProfile = async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/users/login");
   }
 
-  const userId = req.user.id; 
+  const { newName, newEndereco, newEmail, newSenha, confirmNewSenha } = req.body;
 
-  pool.query(
-    `UPDATE usuarios
-     SET nome = $1, email = $2
-     WHERE id = $3`,
-    [newName, newEmail, userId],
-    (error, results) => {
-      if (error) {
-        console.error(error);
-        req.flash("error_msg", "Erro ao atualizar o perfil.");
-        return res.redirect("/users/dashboard");
-      }
+  const userId = req.user.id;
+  const errors = [];
 
-      req.flash("success_msg", "Perfil atualizado com sucesso.");
-      res.redirect("/users/dashboard");
+  if (!newName || !newEndereco || !newEmail) {
+    errors.push({ message: "Preencha todos os campos obrigatórios" });
+  }
+
+  if (newSenha && newSenha.length < 6) {
+    errors.push({ message: "A senha deve ter no mínimo 6 caracteres" });
+  }
+
+  if (newSenha !== confirmNewSenha) {
+    errors.push({ message: "As senhas inseridas são diferentes" });
+  }
+
+  if (errors.length > 0) {
+    return res.render("updateUser.ejs", { errors, newName, newEndereco, newEmail });
+  }
+
+  try {
+    let hashedPassword = req.user.senha;
+
+    if (newSenha) {
+      hashedPassword = await bcrypt.hash(newSenha, 10);
     }
-  );
+
+    await pool.query(
+      `UPDATE usuarios
+       SET nome = $1, endereco = $2, email = $3, senha = $4
+       WHERE id = $5`,
+      [newName, newEndereco, newEmail, hashedPassword, userId]
+    );
+
+    req.flash("success_msg", "Perfil atualizado com sucesso.");
+    res.redirect("/users/dashboard");
+  } catch (error) {
+    console.error(error);
+    req.flash("error_msg", "Erro ao atualizar o perfil.");
+    res.redirect("/users/edit-profile");
+  }
 };
 
 const postDeleteAccount = (req, res) => {
@@ -276,7 +319,57 @@ const createProduct = (req, res) => {
   );
 };
 
+const updateCategory = (req, res, next) => {
+  const categoryId = req.params.id;
+  const { nome } = req.body;
 
+  pool.query('UPDATE categorias SET nome = $1 WHERE id = $2', [nome, categoryId], (err, result) => {
+    if (err) {
+      return next(err);
+    }
+
+    req.flash('success_msg', 'Categoria atualizada com sucesso');
+    res.redirect('/users/dashboard');
+  });
+};
+
+const deleteCategory = (req, res) => {
+  const categoryId = req.params.id; 
+  pool.query(
+    'DELETE FROM categorias WHERE id = $1',
+    [categoryId],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Erro ao excluir a categoria');
+      }
+      
+      req.flash('success_msg', 'Categoria excluída com sucesso');
+      res.redirect('/users/dashboard');
+    }
+  );
+};
+
+const createCategory = (req, res) => {
+  const { nome } = req.body; 
+
+  if (!nome) {
+    return res.status(400).send('Nome da categoria é obrigatório');
+  }
+  pool.query(
+    'INSERT INTO categorias (nome) VALUES ($1)',
+    [nome],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Erro ao criar uma nova categoria');
+      }
+
+      req.flash('success_msg', 'Nova categoria criada com sucesso');
+      res.redirect('/users/dashboard');
+    }
+  );
+};
 
 module.exports = {
   getLogin,
@@ -293,4 +386,9 @@ module.exports = {
   updateProduct,
   deleteProduct,
   createProduct,
+  getCategoryToUpdate,
+  updateCategory,
+  deleteCategory,
+  getCreateCategory,
+  createCategory,
 };

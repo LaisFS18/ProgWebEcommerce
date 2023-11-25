@@ -45,8 +45,13 @@ app.use("/users/dashboard", routes, checkNotAuthenticated);
 app.use("/users/update-profile", routes, checkAuthenticated);
 app.use("/product/update/:id", routes, checkAuthenticated);
 app.use("/update-product/:id", routes, checkAuthenticated);
+app.use("/update-category/:id", routes, checkAuthenticated);
+app.use("/category/update/:id", routes, checkAuthenticated);
 app.use("/product/create", routes, checkAuthenticated);
-app.use("/create-product", routes, checkAuthenticated); 
+app.use("/category/create", routes, checkAuthenticated);
+app.use("/create-product", routes, checkAuthenticated);
+app.use("/create-category", routes, checkAuthenticated);
+app.use("/delete-category/:id", routes, checkAuthenticated);
 app.use("/delete-product/:id", routes, checkAuthenticated);
 app.use("/users/logout", routes);
 

@@ -27,29 +27,58 @@
     
     <h1>Editar Informações</h1>
     <form action="/users/editProfile" method="POST">
-
-    <label for="Nome">Nome:</label>
-    <input
-        type="text"
-        id="newName"
-        name="newName"
-        placeholder="Novo nome"
-        required
-    />
-    <br/>
-
-    <label for="email">Email:</label>
-        <input
-        type="email"
-        id="newEmail"
-        name="newEmail"
-        placeholder="Novo email"
-        required
-        />
-        <br/>
-
-        <input type="submit" value="Alterar" />
-    </form>
+      <label for="newName">Nome:</label>
+      <input
+          type="text"
+          id="newName"
+          name="newName"
+          placeholder="Novo nome"
+          required
+      />
+      <br/>
+  
+      <label for="newEndereco">Endereço:</label>
+      <input
+          type="text"
+          id="newEndereco"
+          name="newEndereco"
+          placeholder="Novo endereço"
+          required
+      />
+      <br/>
+  
+      <label for="newEmail">Email:</label>
+      <input
+          type="email"
+          id="newEmail"
+          name="newEmail"
+          placeholder="Novo email"
+          required
+      />
+      <br/>
+  
+      <label for="newSenha">Nova Senha:</label>
+      <input
+          type="password"
+          id="newSenha"
+          name="newSenha"
+          placeholder="Nova senha"
+          required
+      />
+      <br/>
+  
+      <label for="confirmNewSenha">Confirme a Nova Senha:</label>
+      <input
+          type="password"
+          id="confirmNewSenha"
+          name="confirmNewSenha"
+          placeholder="Confirme a nova senha"
+          required
+      />
+      <br/>
+  
+      <input type="submit" value="Alterar" />
+  </form>  
 
 </body>
 </html>

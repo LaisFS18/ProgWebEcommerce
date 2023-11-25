@@ -37,8 +37,16 @@
       <% }) %>
     </ul>
 
+    <h4>Categorias</h4>
+    <ul>
+      <% categories.forEach(category => { %>
+        <a href="/category/update/<%= category.id %>"><%= category.nome %></a>
+      <% }) %>
+    </ul>
+
     <a href="/">Home</a>
     <a href="/product/create">Criar produto</a>
+    <a href="/category/create">Criar categoria</a>
     <a href="/users/update-profile">Editar perfil</a>
 
     <form action="/users/deleteAccount" method="POST">

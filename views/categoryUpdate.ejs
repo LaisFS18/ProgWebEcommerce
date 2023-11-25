@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Category</title>
+</head>
+<body>
+    <h1>Update Category</h1>
+
+    <form action="/update-category/<%= category.id %>" method="POST">
+        <label for="nome">Name:</label>
+        <input type="text" id="nome" name="nome" value="<%= category.nome %>" required>
+        <br>
+
+        <input type="submit" value="Atualizar">
+    </form>
+
+    <form action="/delete-category/<%= category.id %>" method="POST">
+        <input type="submit" value="Deletar">
+    </form>
+</body>
+</html>
