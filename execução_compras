@@ -1,0 +1,112 @@
+public class ClienteDAO {
+    public Cliente obterClientePorId(long clienteId) {
+        Cliente cliente = null;
+
+        try (Connection connection = DriverManager.getConnection(USERID, NOME, SENHA, CEP, NUMERO, OMPLEMENTO, Login)) {
+            String sql = "SELECT * FROM Cliente WHERE id = ?";
+            
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setLong(1, UserId);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        User = new User();
+                        User.setId(resultSet.getLong("id"));
+                        User.setNome(resultSet.getString("nome"));
+                        User.setEmail(resultSet.getString("Email"));
+                        User.setLogin(resultSet.getString("Login"));
+                        User.setCEP(resultSet.getInt("CEP"));
+                        User.setNum(resultSet.getInt("Número"));
+                        User.setComplemento(resultSet.getString("setComplemento"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cliente;
+    }
+}
+
+public class CheckoutService {
+    public String selecionarMetodoDePagamento() {
+    
+        System.out.println("Selecione um método de pagamento:");
+        System.out.println("1. Cartão de Crédito");
+        System.out.println("2. Cartão de Débito");
+        System.out.println("3. Pix");
+
+        Scanner scanner = new Scanner(System.in);
+        int opcao = scanner.nextInt();
+
+        switch (opcao) {
+            case 1:
+                return "Cartão de Crédito";
+            case 2:
+                return "Cartão de Débito";
+            case 3:
+                return "Pix";
+            default:
+                System.out.println("Opção inválida. Por favor, escolha uma opção válida.");
+                return selecionarMetodoDePagamento(); 
+        }
+    }
+
+    public static void main(String[] args) {
+        CheckoutService checkoutService = new CheckoutService();
+        String metodoDePagamentoSelecionado = checkoutService.selecionarMetodoDePagamento();
+
+        System.out.println("Você escolheu o método de pagamento: " + metodoDePagamentoSelecionado);
+    }
+}
+
+public class PaginaConfirmacao {
+
+    public void exibirConfirmacao(Cliente cliente, List<ItemCarrinho> itensCarrinho, String metodoDePagamento, double precoTotal) {
+
+        System.out.println("Resumo do Pedido:");
+        System.out.println("Cliente: " + cliente.getNome());
+        System.out.println("Itens do Carrinho:");
+
+        for (ItemCarrinho item : itensCarrinho) {
+            System.out.println("    Produto: " + item.getProduto().getNome());
+            System.out.println("    Quantidade: " + item.getQuantidade());
+            System.out.println("    Preço Unitário: " + item.getProduto().getPreco());
+            System.out.println("    Subtotal: " + item.calcularSubtotal());
+        }
+
+        System.out.println("Método de Pagamento: " + metodoDePagamento);
+        System.out.println("Preço Total: " + precoTotal);
+        System.out.println("Por favor, confirme o pedido.");
+
+    }
+}
+
+public class PedidoController {
+    @GetMapping("/confirmacaoPedido")
+    public String exibirPaginaConfirmacao() {
+        return "confirmacaoPedido";
+    }
+
+    @PostMapping("/confirmarPedido")
+    public String confirmarPedido() {
+        enviarEmailConfirmacao();
+        return "redirect:/confirmacaoPedido";
+    }
+
+    private void enviarEmailConfirmacao() {
+    }
+}
+
+public class ServicoEmail {
+    private JavaMailSender javaMailSender;
+
+    public void enviarEmailConfirmacao(String destinatario) {
+        SimpleMailMessage mensagem = new SimpleMailMessage();
+        mensagem.setTo(Email);
+        mensagem.setSubject("Confirmação de Pedido");
+        mensagem.setText("Seu pedido foi confirmado. Obrigado por escolher nossa loja!");
+
+        javaMailSender.send(mensagem);
+    }
+}
