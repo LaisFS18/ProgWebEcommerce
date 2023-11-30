@@ -1,0 +1,70 @@
+class Produtos {
+    private Long ProdutoId;
+    private String nomeP;
+    private int quantidadeP;
+    private String imagemP;
+    private String descricaoP;
+}
+
+class Vendas {
+    private Long Vendasid;
+    private Produto produto;
+    private int quantidadeV;
+    private boolean produtoDisponivel;
+
+}
+
+class ProdutoService {
+    private List<Produtos> produtos;
+
+    public ProdutoService(List<Produto> produtos) {
+        this.produtos = produtos;
+    }
+
+    public int obterQuantidadeEmEstoque(Long produtoId) {
+        Produto produto = produtos.stream()
+                .filter(p -> p.getId().equals(produtoId))
+                .findFirst()
+                .orElse(null);
+
+        return produto != null ? produto.getQuantidade() : 0;
+    }
+}
+
+class CompraService {
+    private List<Vendas> compras;
+    private ProdutoService produtoService;
+
+    public CompraService(List<Vendas> compras, ProdutoService produtoService) {
+        this.compras = compras;
+        this.produtoService = produtoService;
+    }
+
+    public List<Vendas> getComprasDoCliente(Long UserId) {
+        for (Compra compra : compras) {
+            Produto produto = compra.getProduto();
+            int quantidadeDisponivel = produtoService.obterQuantidadeEmEstoque(produto.getId());
+
+            compra.setProdutoDisponivel(compra.getQuantidade() <= quantidadeDisponivel);
+
+            if (compra.isProdutoDisponivel()) {
+                System.out.println("Produto disponível para a compra: " + produto.getNome());
+            } else {
+                System.out.println("Produto indisponível para a compra: " + produto.getNome());
+            }
+        }
+
+        return compras;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        
+        ProdutoService produtoService = new ProdutoService(ListaDeProdutos);
+        CompraService compraService = new CompraService(ListaDeCompras, produtoService);
+        
+        long userId = getUserId();
+        compraService.getComprasDoCliente(UserId);
+    }
+}
